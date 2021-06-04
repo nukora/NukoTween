@@ -46,3 +46,10 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
+
+# Ignore
+/Assets/*
+/Packages
+/ProjectSettings
+!/Assets/NukoTween/
+.vsconfig
