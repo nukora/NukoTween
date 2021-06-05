@@ -60,6 +60,7 @@ namespace NukoTween
         private Quaternion[] toQuaternionCollection;
         private Color[] toColorCollection;
         private string[] toStringCollection;
+        private bool[] toBoolCollection;
 
         // tweenの実行を開始した時間
         private float[] startTimeCollection;
@@ -79,7 +80,7 @@ namespace NukoTween
         //
 
         /// <summary>一番最後に登録された配列のインデックス</summary>
-        private int currentCollectionIndex = -1;
+        private int currentCollectionIndex = 0;
 
         /// <summary>現在登録中のtweenの数</summary>
         private int numberOfTweening = 0;
@@ -131,19 +132,20 @@ namespace NukoTween
         // アクションを指定する為のID
         //======================================================================================
         #region enum Action
-        private const int ActionNone        =   0;
-        private const int ActionLocalMove   = 100;
-        private const int ActionMove        = 101;
-        private const int ActionLocalRotate = 200;
-        private const int ActionRotate      = 202;
-        private const int ActionLocalScale  = 300;
-        private const int ActionAnchorPos   = 400;
-        private const int ActionColor       = 401;
-        private const int ActionFadeGraphic = 402;
-        private const int ActionFillAmount  = 403;
-        private const int ActionText        = 404;
-        private const int ActionTextTMP     = 405;
-        private const int ActionFadeVolume  = 406;
+        private const int ActionNone             =   0;
+        private const int ActionLocalMove        = 100;
+        private const int ActionMove             = 101;
+        private const int ActionLocalRotate      = 200;
+        private const int ActionRotate           = 202;
+        private const int ActionLocalScale       = 300;
+        private const int ActionAnchorPos        = 400;
+        private const int ActionColor            = 401;
+        private const int ActionFadeGraphic      = 402;
+        private const int ActionFillAmount       = 403;
+        private const int ActionText             = 404;
+        private const int ActionTextTMP          = 405;
+        private const int ActionFadeVolume       = 406;
+        private const int ActionDelayedSetActive = 900;
         #endregion
 
 
@@ -170,6 +172,7 @@ namespace NukoTween
             toQuaternionCollection = new Quaternion[simultaneousSize];
             toColorCollection = new Color[simultaneousSize];
             toStringCollection = new string[simultaneousSize];
+            toBoolCollection = new bool[simultaneousSize];
             startTimeCollection = new float[simultaneousSize];
             durationCollection = new float[simultaneousSize];
             delayCollection = new float[simultaneousSize];
@@ -245,6 +248,10 @@ namespace NukoTween
 
                 case ActionFadeVolume:
                     ExecuteActionFadeVolume(index, isRequestComplete);
+                    break;
+
+                case ActionDelayedSetActive:
+                    ExecuteDelayedSetActive(index, isRequestComplete);
                     break;
 
                 default:
@@ -1046,6 +1053,40 @@ namespace NukoTween
                 UnregisterAction(index);
             }
         }
+
+        /// <summary>
+        /// 指定した時間後にGameObjectのSetActiveを変更する
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="active"></param>
+        /// <param name="delay"></param>
+        public int DelayedSetActive(GameObject target, bool active, float delay)
+        {
+            if (!ValidateRegisterAction()) return -1;
+
+            RegisterAction();
+
+            actionCollection[currentCollectionIndex] = ActionDelayedSetActive;
+            targetCollection[currentCollectionIndex] = target;
+            toBoolCollection[currentCollectionIndex] = active;
+            delayCollection[currentCollectionIndex] = delay;
+
+            return currentTweenId;
+        }
+
+        private void ExecuteDelayedSetActive(int index, bool isRequestComplete)
+        {
+            var startTime = startTimeCollection[index] + delayCollection[index];
+
+            if (Time.time < startTime && !isRequestComplete)
+            {
+                return;
+            }
+
+            targetCollection[index].SetActive(toBoolCollection[index]);
+
+            UnregisterAction(index);
+        }
         #endregion
 
 
@@ -1059,17 +1100,9 @@ namespace NukoTween
         /// <param name="id"></param>
         public void Complete(int tweenId)
         {
-            int index = -1;
+            var index = FindIndexById(tweenId);
 
-            for (int i = 0; i < simultaneousSize; i++)
-            {
-                if (tweenIdCollection[i] == tweenId)
-                {
-                    index = i;
-                }
-            }
-
-            if (index == -1)
+            if (index < 0)
             {
                 return;
             }
@@ -1083,17 +1116,9 @@ namespace NukoTween
         /// <param name="tweenId"></param>
         public void Kill(int tweenId)
         {
-            int index = -1;
+            var index = FindIndexById(tweenId);
 
-            for (int i = 0; i < simultaneousSize; i++)
-            {
-                if (tweenIdCollection[i] == tweenId)
-                {
-                    index = i;
-                }
-            }
-
-            if (index == -1)
+            if (index < 0)
             {
                 return;
             }
@@ -1152,6 +1177,32 @@ namespace NukoTween
             targetAudioSourceCollection[index] = null;
             targetTextCollection[index] = null;
             targetTMPCollection[index] = null;
+        }
+
+        /// <summary>
+        /// tweenIdからコレクションのindexを引き当てる
+        /// </summary>
+        /// <param name="tweenId"></param>
+        /// <returns></returns>
+        private int FindIndexById(int tweenId)
+        {
+            if (tweenId < 1)
+            {
+                LogError("引数" + nameof(tweenId) + "は1以上である必要があります");
+                return -1;
+            }
+
+            int index = -1;
+
+            for (int i = 0; i < simultaneousSize; i++)
+            {
+                if (tweenIdCollection[i] == tweenId)
+                {
+                    index = i;
+                }
+            }
+
+            return index;
         }
 
         /// <summary>
