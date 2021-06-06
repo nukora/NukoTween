@@ -27,7 +27,7 @@ namespace NukoTween
         //======================================================================================
         #region private variables
         //
-        // 命令を格納する為の配列
+        // 命令を格納する為の配列(双方向リスト)
         //
 
         // tweenそれぞれで一意のID
@@ -74,13 +74,17 @@ namespace NukoTween
         // イージング関数のID
         private int[] easeIdCollection;
 
+        // 次のノード
+        private int[] nextIndexCollection;
 
-        //
-        // 命令に関するキャッシュ
-        //
+        // 前のノード
+        private int[] previousIndexCollection;
 
-        /// <summary>一番最後に登録された配列のインデックス</summary>
-        private int currentCollectionIndex = 0;
+        /// <summary>先頭ノードのインデックス</summary>
+        private int beginCollectionIndex = -1;
+
+        /// <summary>末尾ノードのインデックス</summary>
+        private int endCollectionIndex = -1;
 
         /// <summary>現在登録中のtweenの数</summary>
         private int numberOfTweening = 0;
@@ -177,15 +181,34 @@ namespace NukoTween
             durationCollection = new float[simultaneousSize];
             delayCollection = new float[simultaneousSize];
             easeIdCollection = new int[simultaneousSize];
+            nextIndexCollection = new int[simultaneousSize];
+            previousIndexCollection = new int[simultaneousSize];
+
+            for (var i = 0; i < simultaneousSize; i++)
+            {
+                nextIndexCollection[i] = -1;
+                previousIndexCollection[i] = -1;
+            }
         }
 
         private void Update()
         {
             if (numberOfTweening == 0) return;
 
-            for (int i = 0; i < simultaneousSize; i++)
+            var index = beginCollectionIndex;
+            var nextIndex = -1;
+
+            for (var i = 0; i < simultaneousSize; i++)
             {
-                ExecuteAction(i, false);
+                nextIndex = nextIndexCollection[index];
+
+                ExecuteAction(index, false);
+
+                index = nextIndex;
+                if (index == -1)
+                {
+                    break;
+                }
             }
         }
         #endregion
@@ -275,13 +298,13 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionLocalMove;
-            relativeCollection[currentCollectionIndex] = relative;
-            targetCollection[currentCollectionIndex] = target;
-            toVector3Collection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionLocalMove;
+            relativeCollection[endCollectionIndex] = relative;
+            targetCollection[endCollectionIndex] = target;
+            toVector3Collection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -341,13 +364,13 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionMove;
-            relativeCollection[currentCollectionIndex] = relative;
-            targetCollection[currentCollectionIndex] = target;
-            toVector3Collection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionMove;
+            relativeCollection[endCollectionIndex] = relative;
+            targetCollection[endCollectionIndex] = target;
+            toVector3Collection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -414,13 +437,13 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionAnchorPos;
-            relativeCollection[currentCollectionIndex] = relative;
-            targetRectTransformCollection[currentCollectionIndex] = rectTransform;
-            toVector3Collection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionAnchorPos;
+            relativeCollection[endCollectionIndex] = relative;
+            targetRectTransformCollection[endCollectionIndex] = rectTransform;
+            toVector3Collection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -480,13 +503,13 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionLocalScale;
-            relativeCollection[currentCollectionIndex] = relative;
-            targetCollection[currentCollectionIndex] = target;
-            toVector3Collection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionLocalScale;
+            relativeCollection[endCollectionIndex] = relative;
+            targetCollection[endCollectionIndex] = target;
+            toVector3Collection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -561,13 +584,13 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionLocalRotate;
-            relativeCollection[currentCollectionIndex] = relative;
-            targetCollection[currentCollectionIndex] = target;
-            toQuaternionCollection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionLocalRotate;
+            relativeCollection[endCollectionIndex] = relative;
+            targetCollection[endCollectionIndex] = target;
+            toQuaternionCollection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -642,13 +665,13 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionRotate;
-            relativeCollection[currentCollectionIndex] = relative;
-            targetCollection[currentCollectionIndex] = target;
-            toQuaternionCollection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionRotate;
+            relativeCollection[endCollectionIndex] = relative;
+            targetCollection[endCollectionIndex] = target;
+            toQuaternionCollection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -707,12 +730,12 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionColor;
-            targetGraphicCollection[currentCollectionIndex] = target;
-            toColorCollection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionColor;
+            targetGraphicCollection[endCollectionIndex] = target;
+            toColorCollection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -766,12 +789,12 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionFadeGraphic;
-            targetGraphicCollection[currentCollectionIndex] = target;
-            toColorCollection[currentCollectionIndex] = new Color(0f, 0f, 0f, to);
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionFadeGraphic;
+            targetGraphicCollection[endCollectionIndex] = target;
+            toColorCollection[endCollectionIndex] = new Color(0f, 0f, 0f, to);
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -829,12 +852,12 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionFillAmount;
-            targetGraphicCollection[currentCollectionIndex] = target;
-            toVector3Collection[currentCollectionIndex] = new Vector3(to, 0f);
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionFillAmount;
+            targetGraphicCollection[endCollectionIndex] = target;
+            toVector3Collection[endCollectionIndex] = new Vector3(to, 0f);
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -894,12 +917,12 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionText;
-            targetTextCollection[currentCollectionIndex] = target;
-            toStringCollection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionText;
+            targetTextCollection[endCollectionIndex] = target;
+            toStringCollection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -955,12 +978,12 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionTextTMP;
-            targetTMPCollection[currentCollectionIndex] = target;
-            toStringCollection[currentCollectionIndex] = to;
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionTextTMP;
+            targetTMPCollection[endCollectionIndex] = target;
+            toStringCollection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -1010,12 +1033,12 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionFadeVolume;
-            targetAudioSourceCollection[currentCollectionIndex] = target;
-            toVector3Collection[currentCollectionIndex] = new Vector3(to, 0f);
-            durationCollection[currentCollectionIndex] = duration;
-            delayCollection[currentCollectionIndex] = delay;
-            easeIdCollection[currentCollectionIndex] = easeId;
+            actionCollection[endCollectionIndex] = ActionFadeVolume;
+            targetAudioSourceCollection[endCollectionIndex] = target;
+            toVector3Collection[endCollectionIndex] = new Vector3(to, 0f);
+            durationCollection[endCollectionIndex] = duration;
+            delayCollection[endCollectionIndex] = delay;
+            easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
         }
@@ -1066,10 +1089,10 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[currentCollectionIndex] = ActionDelayedSetActive;
-            targetCollection[currentCollectionIndex] = target;
-            toBoolCollection[currentCollectionIndex] = active;
-            delayCollection[currentCollectionIndex] = delay;
+            actionCollection[endCollectionIndex] = ActionDelayedSetActive;
+            targetCollection[endCollectionIndex] = target;
+            toBoolCollection[endCollectionIndex] = active;
+            delayCollection[endCollectionIndex] = delay;
 
             return currentTweenId;
         }
@@ -1152,13 +1175,35 @@ namespace NukoTween
         /// </summary>
         private void RegisterAction()
         {
+            var index = endCollectionIndex;
+
+            for (int i = 0; i < simultaneousSize; i++)
+            {
+                index = (index + 1) % simultaneousSize;
+                
+                if(tweenIdCollection[index] == 0)
+                {
+                    break;
+                }
+            }
+
+            if (numberOfTweening == 0)
+            {
+                beginCollectionIndex = index;
+            }
+            else
+            {
+                previousIndexCollection[index] = endCollectionIndex;
+                nextIndexCollection[endCollectionIndex] = index;
+            }
+            endCollectionIndex = index;
+
             currentTweenId++;
             numberOfTweening++;
-            currentCollectionIndex = (currentCollectionIndex + 1) % simultaneousSize;
 
-            tweenIdCollection[currentCollectionIndex] = currentTweenId;
-            workingCollection[currentCollectionIndex] = false;
-            startTimeCollection[currentCollectionIndex] = Time.time;
+            tweenIdCollection[index] = currentTweenId;
+            workingCollection[index] = false;
+            startTimeCollection[index] = Time.time;
         }
 
         /// <summary>
@@ -1167,8 +1212,35 @@ namespace NukoTween
         /// <param name="index"></param>
         private void UnregisterAction(int index)
         {
+            var previousIndex = previousIndexCollection[index];
+            var nextIndex = nextIndexCollection[index];
+
+            if (numberOfTweening == 1)
+            {
+                beginCollectionIndex = -1;
+                endCollectionIndex = -1;
+            }
+            else if (previousIndex != -1 && nextIndex != -1)
+            {
+                nextIndexCollection[previousIndexCollection[index]] = nextIndex;
+                previousIndexCollection[nextIndexCollection[index]] = previousIndex;
+            }
+            else if (beginCollectionIndex == index)
+            {
+                beginCollectionIndex = nextIndexCollection[index];
+                previousIndexCollection[nextIndexCollection[index]] = -1;
+            }
+            else if (endCollectionIndex == index)
+            {
+                endCollectionIndex = previousIndexCollection[index];
+                nextIndexCollection[previousIndexCollection[index]] = -1;
+            }
+            previousIndexCollection[index] = -1;
+            nextIndexCollection[index] = -1;
+
             numberOfTweening--;
-            tweenIdCollection[index] = -1;
+
+            tweenIdCollection[index] = 0;
             actionCollection[index] = ActionNone;
 
             targetAudioSourceCollection[index] = null;
@@ -1192,17 +1264,31 @@ namespace NukoTween
                 return -1;
             }
 
-            int index = -1;
+            if (numberOfTweening == 0) 
+            { 
+                return -1; 
+            }
+
+            int index = beginCollectionIndex;
+            int result = -1;
 
             for (int i = 0; i < simultaneousSize; i++)
             {
-                if (tweenIdCollection[i] == tweenId)
+                if (tweenIdCollection[index] == tweenId)
                 {
-                    index = i;
+                    result = index;
+                    break;
+                }
+
+                index = nextIndexCollection[index];
+
+                if (index == -1)
+                {
+                    break;
                 }
             }
 
-            return index;
+            return result;
         }
 
         /// <summary>
