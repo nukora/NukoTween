@@ -18,7 +18,7 @@ NukoTweenはUdonで実装されたTweenアニメーションエンジンです�
 1. Assets/NukoTweenディレクトリの中にあるNukoTweenEngineプレハブをヒエラルキーに配置します。
 2. ヒエラルキー上にTweenさせたいオブジェクトを作成します。
 3. 作成したオブジェクトにUdonBehaviorをアタッチし、以下のようなスクリプトを書きます。
-```
+```C#
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -37,9 +37,169 @@ public class TweenCube : UdonSharpBehaviour
 4. インスペクターのtween欄にヒエラルキー上のNukoTweenEngineをアタッチします。
 5. シーン再生後Trigger Interactボタンを押下し、アニメーションが再生される事を確認します。
 
-## 機能一覧
+## メソッド一覧
 
-編集中
+全ての機能は`NukoTweenEngine`クラスのインスタンスメソッドとして実装されています。
+
+### Transform
+#### `LocalMoveTo`
+```C#
+LocalMoveTo(GameObject target, Vector3 to, float duration, float delay, int easeId, bool relative)
+```
+ターゲットのLocalPositionを指定した位置に変更します。
+
+#### `MoveTo`
+```C#
+MoveTo(GameObject target, Vector3 to, float duration, float delay, int easeId, bool relative)
+```
+ターゲットのPositionを指定した位置に変更します。
+
+#### `LocalScaleTo`
+```C#
+LocalScaleTo(GameObject target, Vector3 to, float duration, float delay, int easeId, bool relative)
+```
+ターゲットのLocalScaleを指定した大きさに変更します。
+
+#### `LocalRotateTo`
+```C#
+LocalRotateTo(GameObject target, Vector3 to, float duration, float delay, int easeId, bool relative)
+```
+ターゲットのLocalRotateを指定した角度に変更します。  
+角度はオイラー角で指定します。
+
+#### `LocalRotateQuaternionTo`
+```C#
+LocalRotateQuaternionTo(GameObject target, Quaternion to, float duration, float delay, int easeId, bool relative)
+```
+ターゲットのLocalRotateを指定した角度に変更します。  
+角度はクォータニオンで指定します。
+
+#### `RotateTo`
+```C#
+RotateTo(GameObject target, Vector3 to, float duration, float delay, int easeId, bool relative)
+```
+ターゲットのRotateを指定した角度に変更します。  
+角度はオイラー角で指定します。
+
+#### `RotateQuaternionTo`
+```C#
+RotateQuaternionTo(GameObject target, Quaternion to, float duration, float delay, int easeId, bool relative)
+```
+ターゲットのRotateを指定した角度に変更します。  
+角度はクォータニオンで指定します。
+
+### RectTransform
+#### `AnchorPosTo`
+```C#
+AnchorPosTo(GameObject target, Vector3 to, float duration, float delay, int easeId, bool relative)
+```
+ターゲットのAnchoredPositionを指定した位置に変更します。
+
+### Graphic
+#### `ColorTo`
+```C#
+ColorTo(Graphic target, Color to, float duration, float delay, int easeId)
+```
+ターゲットのColorを指定した色に変更します。
+
+#### `FadeGraphicTo`
+```C#
+FadeGraphicTo(Graphic target, float to, float duration, float delay, int easeId)
+```
+ターゲットのColorの透明度を指定した値に変更します。
+
+### Image
+#### `FillAmountTo`
+```C#
+FillAmountTo(Image target, float to, float duration, float delay, int easeId)
+```
+ターゲットのFillAmountを指定した値に変更します。
+
+### Text
+#### `TextTo`
+```C#
+TextTo(Text target, string to, float duration, float delay, int easeId)
+```
+ターゲットのTextを操作し、文字送りアニメーションを行います。
+
+### TextMeshPro
+#### `TextTMPTo`
+```C#
+TextTMPTo(TextMeshProUGUI target, string to, float duration, float delay, int easeId)
+```
+ターゲットのTextを操作し、文字送りアニメーションを行います。
+
+### AudioSource
+#### `FadeVolumeTo`
+```C#
+FadeVolumeTo(AudioSource target, float to, float duration, float delay, int easeId)
+```
+ターゲットのVolumeを指定した音量に変更します。
+
+### Misc
+#### `DelayedSetActive`
+```C#
+DelayedSetActive(GameObject target, bool active, float delay)
+```
+指定した時間後にGameObjectのSetActiveを変更します。
+
+### Control Mathods
+#### `Complete`
+```C#
+Complete(int tweenId)
+```
+動作中のtweenを即座に完了状態にします。
+
+#### `Kill`
+```C#
+Kill(int tweenId)
+```
+動作中のtweenを現在の状態で中止します。
+
+## イージング関数
+
+以下のイージング関数を使用できます。  
+`NukoTweenEngine`クラスの読み取り専用のインスタンス変数として定義されていますので、メソッド呼び出し時はこちらを使用してください。
+
+- EaseLinear
+- EaseInSine
+- EaseOutSine
+- EaseInOutSine
+- EaseInQuad
+- EaseOutQuad
+- EaseInOutQuad
+- EaseInCubic
+- EaseOutCubic
+- EaseInOutCubic
+- EaseInQuart
+- EaseOutQuart
+- EaseInOutQuart
+- EaseInQuint
+- EaseOutQuint
+- EaseInOutQuint
+- EaseInExpo
+- EaseOutExpo
+- EaseInOutExpo
+- EaseInCirc
+- EaseOutCirc
+- EaseInOutCirc
+- EaseInBack
+- EaseOutBack
+- EaseInOutBack
+- EaseInElastic
+- EaseOutElastic
+- EaseInOutElastic
+- EaseInBounce
+- EaseOutBounce
+- EaseInOutBounce
+
+## プロパティ
+
+エンジンの動作をカスタマイズします。  
+`NukoTweenEngine`をアタッチしたオブジェクトのインスペクターから変更可能です。
+
+### Simultaneous Size
+tweenを同時に実行できる数を指定します。これには待機中のtweenも含まれます。
 
 ## ライセンス
 
