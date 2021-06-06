@@ -39,7 +39,14 @@ public class TweenCube : UdonSharpBehaviour
 
 ## メソッド一覧
 
-全ての機能は`NukoTweenEngine`クラスのインスタンスメソッドとして実装されています。
+全ての機能は`NukoTweenEngine`クラスのインスタンスメソッドとして実装されています。  
+引数には以下の値を設定します。
+- `target` 操作する対象
+- `to` 操作後の状態
+- `duration` 操作にかける時間(秒)
+- `delay` 操作の開始を遅らせる時間(秒)
+- `easeId` 使用する[イージング関数](#イージング関数)
+- `relative` 現在の状態から相対的に変化させるかどうか
 
 ### Transform
 #### `LocalMoveTo`
