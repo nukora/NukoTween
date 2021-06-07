@@ -42,6 +42,12 @@ namespace NukoTween
         // 相対的な値で動作するかどうか
         private bool[] relativeCollection;
 
+        // ループの種類
+        private int[] loopModeCollection;
+
+        // ループの残り回数
+        private int[] loopCountCollection;
+
         // 操作対象 
         private GameObject[] targetCollection;
         private RectTransform[] targetRectTransformCollection;
@@ -67,9 +73,6 @@ namespace NukoTween
 
         // tweenの実行にかかる時間
         private float[] durationCollection;
-
-        // tweenの実行を遅らせる時間
-        private float[] delayCollection;
 
         // イージング関数のID
         private int[] easeIdCollection;
@@ -154,6 +157,17 @@ namespace NukoTween
 
 
         //======================================================================================
+        // ループを指定する為のID
+        //======================================================================================
+        #region enum LoopMode
+        private const int LoopModeNone        = 0;
+        private const int LoopModeRestart     = 1;
+        private const int LoopModeReverse     = 2;
+        private const int LoopModeIncremental = 3;
+        #endregion
+
+
+        //======================================================================================
         // Unity(Udon)のライフサイクルイベント
         //======================================================================================
         #region lifecycle events
@@ -163,6 +177,8 @@ namespace NukoTween
             workingCollection = new bool[simultaneousSize];
             actionCollection = new int[simultaneousSize];
             relativeCollection = new bool[simultaneousSize];
+            loopModeCollection = new int[simultaneousSize];
+            loopCountCollection = new int[simultaneousSize];
             targetCollection = new GameObject[simultaneousSize];
             targetRectTransformCollection = new RectTransform[simultaneousSize];
             targetGraphicCollection = new Graphic[simultaneousSize];
@@ -179,7 +195,6 @@ namespace NukoTween
             toBoolCollection = new bool[simultaneousSize];
             startTimeCollection = new float[simultaneousSize];
             durationCollection = new float[simultaneousSize];
-            delayCollection = new float[simultaneousSize];
             easeIdCollection = new int[simultaneousSize];
             nextIndexCollection = new int[simultaneousSize];
             previousIndexCollection = new int[simultaneousSize];
@@ -303,7 +318,7 @@ namespace NukoTween
             targetCollection[endCollectionIndex] = target;
             toVector3Collection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -311,7 +326,7 @@ namespace NukoTween
 
         private void ExecuteActionLocalMove(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -344,7 +359,39 @@ namespace NukoTween
             {
                 target.transform.localPosition = toVector3Collection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = tmp;
+                    }
+                    else if (loopMode == LoopModeIncremental)
+                    {
+                        var tmp = toVector3Collection[index] - fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = toVector3Collection[index] + tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -369,7 +416,7 @@ namespace NukoTween
             targetCollection[endCollectionIndex] = target;
             toVector3Collection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -377,7 +424,7 @@ namespace NukoTween
 
         private void ExecuteActionMove(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -410,7 +457,39 @@ namespace NukoTween
             {
                 target.transform.position = toVector3Collection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = tmp;
+                    }
+                    else if (loopMode == LoopModeIncremental)
+                    {
+                        var tmp = toVector3Collection[index] - fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = toVector3Collection[index] + tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -442,7 +521,7 @@ namespace NukoTween
             targetRectTransformCollection[endCollectionIndex] = rectTransform;
             toVector3Collection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -450,7 +529,7 @@ namespace NukoTween
 
         private void ExecuteActionAnchorPos(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -483,7 +562,39 @@ namespace NukoTween
             {
                 rectTransform.anchoredPosition3D = toVector3Collection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = tmp;
+                    }
+                    else if (loopMode == LoopModeIncremental)
+                    {
+                        var tmp = toVector3Collection[index] - fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = toVector3Collection[index] + tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -508,7 +619,7 @@ namespace NukoTween
             targetCollection[endCollectionIndex] = target;
             toVector3Collection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -516,7 +627,7 @@ namespace NukoTween
 
         private void ExecuteActionLocalScale(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -549,7 +660,39 @@ namespace NukoTween
             {
                 target.transform.localScale = toVector3Collection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = tmp;
+                    }
+                    else if (loopMode == LoopModeIncremental)
+                    {
+                        var tmp = toVector3Collection[index] - fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = toVector3Collection[index] + tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -589,7 +732,7 @@ namespace NukoTween
             targetCollection[endCollectionIndex] = target;
             toQuaternionCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -597,7 +740,7 @@ namespace NukoTween
 
         private void ExecuteActionLocalRotate(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -630,7 +773,39 @@ namespace NukoTween
             {
                 target.transform.localRotation = toQuaternionCollection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromQuaternionCollection[index];
+                        fromQuaternionCollection[index] = toQuaternionCollection[index];
+                        toQuaternionCollection[index] = tmp;
+                    }
+                    else if (loopMode == LoopModeIncremental)
+                    {
+                        var tmp = toQuaternionCollection[index] * Quaternion.Inverse(fromQuaternionCollection[index]);
+                        fromQuaternionCollection[index] = toQuaternionCollection[index];
+                        toQuaternionCollection[index] = toQuaternionCollection[index] * tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -670,7 +845,7 @@ namespace NukoTween
             targetCollection[endCollectionIndex] = target;
             toQuaternionCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -678,7 +853,7 @@ namespace NukoTween
 
         private void ExecuteActionRotate(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -711,7 +886,39 @@ namespace NukoTween
             {
                 target.transform.rotation = toQuaternionCollection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromQuaternionCollection[index];
+                        fromQuaternionCollection[index] = toQuaternionCollection[index];
+                        toQuaternionCollection[index] = tmp;
+                    }
+                    else if (loopMode == LoopModeIncremental)
+                    {
+                        var tmp = toQuaternionCollection[index] * Quaternion.Inverse(fromQuaternionCollection[index]);
+                        fromQuaternionCollection[index] = toQuaternionCollection[index];
+                        toQuaternionCollection[index] = toQuaternionCollection[index] * tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -734,7 +941,7 @@ namespace NukoTween
             targetGraphicCollection[endCollectionIndex] = target;
             toColorCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -742,7 +949,7 @@ namespace NukoTween
 
         private void ExecuteActionColor(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -770,7 +977,33 @@ namespace NukoTween
             {
                 target.color = toColorCollection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromColorCollection[index];
+                        fromColorCollection[index] = toColorCollection[index];
+                        toColorCollection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -793,7 +1026,7 @@ namespace NukoTween
             targetGraphicCollection[endCollectionIndex] = target;
             toColorCollection[endCollectionIndex] = new Color(0f, 0f, 0f, to);
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -801,7 +1034,7 @@ namespace NukoTween
 
         private void ExecuteActionFadeGraphic(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -833,7 +1066,33 @@ namespace NukoTween
                 color.a = toColorCollection[index].a;
                 target.color = color;
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromColorCollection[index];
+                        fromColorCollection[index] = toColorCollection[index];
+                        toColorCollection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -856,7 +1115,7 @@ namespace NukoTween
             targetGraphicCollection[endCollectionIndex] = target;
             toVector3Collection[endCollectionIndex] = new Vector3(to, 0f);
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -864,7 +1123,7 @@ namespace NukoTween
 
         private void ExecuteActionFillAmount(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -892,7 +1151,33 @@ namespace NukoTween
             {
                 target.fillAmount = toVector3Collection[index].x;
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -921,7 +1206,7 @@ namespace NukoTween
             targetTextCollection[endCollectionIndex] = target;
             toStringCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -929,7 +1214,7 @@ namespace NukoTween
 
         private void ExecuteActionText(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -982,7 +1267,7 @@ namespace NukoTween
             targetTMPCollection[endCollectionIndex] = target;
             toStringCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -990,7 +1275,7 @@ namespace NukoTween
 
         private void ExecuteActionTextTMP(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -1037,7 +1322,7 @@ namespace NukoTween
             targetAudioSourceCollection[endCollectionIndex] = target;
             toVector3Collection[endCollectionIndex] = new Vector3(to, 0f);
             durationCollection[endCollectionIndex] = duration;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
 
             return currentTweenId;
@@ -1045,7 +1330,7 @@ namespace NukoTween
 
         private void ExecuteActionFadeVolume(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -1073,7 +1358,33 @@ namespace NukoTween
             {
                 target.volume = toVector3Collection[index].x;
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector3Collection[index];
+                        fromVector3Collection[index] = toVector3Collection[index];
+                        toVector3Collection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -1092,14 +1403,14 @@ namespace NukoTween
             actionCollection[endCollectionIndex] = ActionDelayedSetActive;
             targetCollection[endCollectionIndex] = target;
             toBoolCollection[endCollectionIndex] = active;
-            delayCollection[endCollectionIndex] = delay;
+            startTimeCollection[endCollectionIndex] += delay;
 
             return currentTweenId;
         }
 
         private void ExecuteDelayedSetActive(int index, bool isRequestComplete)
         {
-            var startTime = startTimeCollection[index] + delayCollection[index];
+            var startTime = startTimeCollection[index];
 
             if (Time.time < startTime && !isRequestComplete)
             {
@@ -1147,6 +1458,60 @@ namespace NukoTween
             }
 
             UnregisterAction(index);
+        }
+
+        /// <summary>
+        /// 始点を変えずにtweenを指定した回数繰り返す
+        /// </summary>
+        /// <param name="tweenId"></param>
+        /// <param name="loops"></param>
+        public void LoopRestart(int tweenId, int loops)
+        {
+            var index = FindIndexById(tweenId);
+
+            if (index < 0)
+            {
+                return;
+            }
+
+            loopModeCollection[index] = LoopModeRestart;
+            loopCountCollection[index] = loops;
+        }
+
+        /// <summary>
+        /// 始点と終点を行き来するようにtweenを指定した回数繰り返す
+        /// </summary>
+        /// <param name="tweenId"></param>
+        /// <param name="loops"></param>
+        public void LoopReverse(int tweenId, int loops)
+        {
+            var index = FindIndexById(tweenId);
+
+            if (index < 0)
+            {
+                return;
+            }
+
+            loopModeCollection[index] = LoopModeReverse;
+            loopCountCollection[index] = loops;
+        }
+
+        /// <summary>
+        /// 前回の終点を始点としてtweenを指定した回数繰り返す
+        /// </summary>
+        /// <param name="tweenId"></param>
+        /// <param name="loops"></param>
+        public void LoopIncremental(int tweenId, int loops)
+        {
+            var index = FindIndexById(tweenId);
+
+            if (index < 0)
+            {
+                return;
+            }
+
+            loopModeCollection[index] = LoopModeIncremental;
+            loopCountCollection[index] = loops;
         }
         #endregion
 
@@ -1204,6 +1569,8 @@ namespace NukoTween
             tweenIdCollection[index] = currentTweenId;
             workingCollection[index] = false;
             startTimeCollection[index] = Time.time;
+            loopModeCollection[index] = LoopModeNone;
+            loopCountCollection[index] = 0;
         }
 
         /// <summary>
