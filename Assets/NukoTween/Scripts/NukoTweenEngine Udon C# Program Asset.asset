@@ -4009,7 +4009,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: ActionColor
+      Data: ActionGraphicColor
     - Name: $v
       Entry: 7
       Data: 220|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -4030,10 +4030,10 @@ MonoBehaviour:
       Data: SystemInt32
     - Name: symbolOriginalName
       Entry: 1
-      Data: ActionColor
+      Data: ActionGraphicColor
     - Name: symbolUniqueName
       Entry: 1
-      Data: ActionColor
+      Data: ActionGraphicColor
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -4066,7 +4066,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: ActionFadeGraphic
+      Data: ActionGraphicFade
     - Name: $v
       Entry: 7
       Data: 223|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -4087,10 +4087,10 @@ MonoBehaviour:
       Data: SystemInt32
     - Name: symbolOriginalName
       Entry: 1
-      Data: ActionFadeGraphic
+      Data: ActionGraphicFade
     - Name: symbolUniqueName
       Entry: 1
-      Data: ActionFadeGraphic
+      Data: ActionGraphicFade
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -4237,7 +4237,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: ActionTextTMP
+      Data: ActionTMPText
     - Name: $v
       Entry: 7
       Data: 232|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -4258,10 +4258,10 @@ MonoBehaviour:
       Data: SystemInt32
     - Name: symbolOriginalName
       Entry: 1
-      Data: ActionTextTMP
+      Data: ActionTMPText
     - Name: symbolUniqueName
       Entry: 1
-      Data: ActionTextTMP
+      Data: ActionTMPText
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -4294,7 +4294,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: ActionFadeVolume
+      Data: ActionAudioFade
     - Name: $v
       Entry: 7
       Data: 235|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -4315,10 +4315,10 @@ MonoBehaviour:
       Data: SystemInt32
     - Name: symbolOriginalName
       Entry: 1
-      Data: ActionFadeVolume
+      Data: ActionAudioFade
     - Name: symbolUniqueName
       Entry: 1
-      Data: ActionFadeVolume
+      Data: ActionAudioFade
     - Name: symbolDefaultValue
       Entry: 6
       Data: 

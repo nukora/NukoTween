@@ -146,12 +146,12 @@ namespace NukoTween
         private const int ActionRotate           = 202;
         private const int ActionLocalScale       = 300;
         private const int ActionAnchorPos        = 400;
-        private const int ActionColor            = 401;
-        private const int ActionFadeGraphic      = 402;
+        private const int ActionGraphicColor     = 401;
+        private const int ActionGraphicFade      = 402;
         private const int ActionFillAmount       = 403;
         private const int ActionText             = 404;
-        private const int ActionTextTMP          = 405;
-        private const int ActionFadeVolume       = 406;
+        private const int ActionTMPText          = 405;
+        private const int ActionAudioFade        = 406;
         private const int ActionDelayedSetActive = 900;
         #endregion
 
@@ -264,12 +264,12 @@ namespace NukoTween
                     ExecuteActionLocalScale(index, isRequestComplete);
                     break;
 
-                case ActionColor:
-                    ExecuteActionColor(index, isRequestComplete);
+                case ActionGraphicColor:
+                    ExecuteActionGraphicColor(index, isRequestComplete);
                     break;
 
-                case ActionFadeGraphic:
-                    ExecuteActionFadeGraphic(index, isRequestComplete);
+                case ActionGraphicFade:
+                    ExecuteActionGraphicFade(index, isRequestComplete);
                     break;
 
                 case ActionFillAmount:
@@ -280,12 +280,12 @@ namespace NukoTween
                     ExecuteActionText(index, isRequestComplete);
                     break;
 
-                case ActionTextTMP:
-                    ExecuteActionTextTMP(index, isRequestComplete);
+                case ActionTMPText:
+                    ExecuteActionTMPText(index, isRequestComplete);
                     break;
 
-                case ActionFadeVolume:
-                    ExecuteActionFadeVolume(index, isRequestComplete);
+                case ActionAudioFade:
+                    ExecuteActionAudioFade(index, isRequestComplete);
                     break;
 
                 case ActionDelayedSetActive:
@@ -931,13 +931,13 @@ namespace NukoTween
         /// <param name="delay">tween開始を遅らせる時間(s)</param>
         /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
         /// <returns>tweenId</returns>
-        public int ColorTo(Graphic target, Color to, float duration, float delay, int easeId)
+        public int GraphicColorTo(Graphic target, Color to, float duration, float delay, int easeId)
         {
             if (!ValidateRegisterAction()) return -1;
 
             RegisterAction();
 
-            actionCollection[endCollectionIndex] = ActionColor;
+            actionCollection[endCollectionIndex] = ActionGraphicColor;
             targetGraphicCollection[endCollectionIndex] = target;
             toColorCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
@@ -947,7 +947,7 @@ namespace NukoTween
             return currentTweenId;
         }
 
-        private void ExecuteActionColor(int index, bool isRequestComplete)
+        private void ExecuteActionGraphicColor(int index, bool isRequestComplete)
         {
             var startTime = startTimeCollection[index];
 
@@ -1016,13 +1016,13 @@ namespace NukoTween
         /// <param name="delay">tween開始を遅らせる時間(s)</param>
         /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
         /// <returns>tweenId</returns>
-        public int FadeGraphicTo(Graphic target, float to, float duration, float delay, int easeId)
+        public int GraphicFadeTo(Graphic target, float to, float duration, float delay, int easeId)
         {
             if (!ValidateRegisterAction()) return -1;
 
             RegisterAction();
 
-            actionCollection[endCollectionIndex] = ActionFadeGraphic;
+            actionCollection[endCollectionIndex] = ActionGraphicFade;
             targetGraphicCollection[endCollectionIndex] = target;
             toColorCollection[endCollectionIndex] = new Color(0f, 0f, 0f, to);
             durationCollection[endCollectionIndex] = duration;
@@ -1032,7 +1032,7 @@ namespace NukoTween
             return currentTweenId;
         }
 
-        private void ExecuteActionFadeGraphic(int index, bool isRequestComplete)
+        private void ExecuteActionGraphicFade(int index, bool isRequestComplete)
         {
             var startTime = startTimeCollection[index];
 
@@ -1251,7 +1251,7 @@ namespace NukoTween
         /// <param name="delay">tween開始を遅らせる時間(s)</param>
         /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
         /// <returns>tweenId</returns>
-        public int TextTMPTo(TextMeshProUGUI target, string to, float duration, float delay, int easeId)
+        public int TMPTextTo(TextMeshProUGUI target, string to, float duration, float delay, int easeId)
         {
             if (!ValidateRegisterAction()) return -1;
 
@@ -1263,7 +1263,7 @@ namespace NukoTween
 
             RegisterAction();
 
-            actionCollection[endCollectionIndex] = ActionTextTMP;
+            actionCollection[endCollectionIndex] = ActionTMPText;
             targetTMPCollection[endCollectionIndex] = target;
             toStringCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
@@ -1273,7 +1273,7 @@ namespace NukoTween
             return currentTweenId;
         }
 
-        private void ExecuteActionTextTMP(int index, bool isRequestComplete)
+        private void ExecuteActionTMPText(int index, bool isRequestComplete)
         {
             var startTime = startTimeCollection[index];
 
@@ -1312,13 +1312,13 @@ namespace NukoTween
         /// <param name="delay">tween開始を遅らせる時間(s)</param>
         /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
         /// <returns>tweenId</returns>
-        public int FadeVolumeTo(AudioSource target, float to, float duration, float delay, int easeId)
+        public int AudioFadeTo(AudioSource target, float to, float duration, float delay, int easeId)
         {
             if (!ValidateRegisterAction()) return -1;
 
             RegisterAction();
 
-            actionCollection[endCollectionIndex] = ActionFadeVolume;
+            actionCollection[endCollectionIndex] = ActionAudioFade;
             targetAudioSourceCollection[endCollectionIndex] = target;
             toVector3Collection[endCollectionIndex] = new Vector3(to, 0f);
             durationCollection[endCollectionIndex] = duration;
@@ -1328,7 +1328,7 @@ namespace NukoTween
             return currentTweenId;
         }
 
-        private void ExecuteActionFadeVolume(int index, bool isRequestComplete)
+        private void ExecuteActionAudioFade(int index, bool isRequestComplete)
         {
             var startTime = startTimeCollection[index];
 
