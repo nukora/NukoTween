@@ -163,6 +163,28 @@ Kill(int tweenId)
 ```
 動作中のtweenを現在の状態で中止します。
 
+### Loop
+登録したtweenがループするように設定します。  
+loopsにはループ回数を指定し、-1を渡すと無限ループになります。
+
+#### `LoopRestart`
+```C#
+LoopRestart(int tweenId, int loops)
+```
+ループする際、前回の始点に値を戻してからアニメーションが再実行されます。
+
+#### `LoopReverse`
+```C#
+LoopRestart(int tweenId, int loops)
+```
+ループする際、前回の終点を始点として、前回の始点へ戻るようなアニメーションを繰り返します。
+
+#### `LoopIncremental`
+```C#
+LoopRestart(int tweenId, int loops)
+```
+ループする際、前回の終点を始点として、前回と同じアニメーションを実行します。
+
 ## イージング関数
 
 以下のイージング関数を使用できます。  
