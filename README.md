@@ -103,15 +103,15 @@ AnchorPosTo(GameObject target, Vector3 to, float duration, float delay, int ease
 ターゲットのAnchoredPositionを指定した位置に変更します。
 
 ### Graphic
-#### `ColorTo`
+#### `GraphicColorTo`
 ```C#
-ColorTo(Graphic target, Color to, float duration, float delay, int easeId)
+GraphicColorTo(Graphic target, Color to, float duration, float delay, int easeId)
 ```
 ターゲットのColorを指定した色に変更します。
 
-#### `FadeGraphicTo`
+#### `GraphicFadeTo`
 ```C#
-FadeGraphicTo(Graphic target, float to, float duration, float delay, int easeId)
+GraphicFadeTo(Graphic target, float to, float duration, float delay, int easeId)
 ```
 ターゲットのColorの透明度を指定した値に変更します。
 
@@ -130,16 +130,16 @@ TextTo(Text target, string to, float duration, float delay, int easeId)
 ターゲットのTextを操作し、文字送りアニメーションを行います。
 
 ### TextMeshPro
-#### `TextTMPTo`
+#### `TMPTextTo`
 ```C#
-TextTMPTo(TextMeshProUGUI target, string to, float duration, float delay, int easeId)
+TMPTextTo(TextMeshProUGUI target, string to, float duration, float delay, int easeId)
 ```
 ターゲットのTextを操作し、文字送りアニメーションを行います。
 
 ### AudioSource
-#### `FadeVolumeTo`
+#### `AudioFadeTo`
 ```C#
-FadeVolumeTo(AudioSource target, float to, float duration, float delay, int easeId)
+AudioFadeTo(AudioSource target, float to, float duration, float delay, int easeId)
 ```
 ターゲットのVolumeを指定した音量に変更します。
 
