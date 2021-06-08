@@ -143,6 +143,43 @@ AudioFadeTo(AudioSource target, float to, float duration, float delay, int easeI
 ```
 ターゲットのVolumeを指定した音量に変更します。
 
+### Material
+#### `MaterialColorTo`
+```C#
+MaterialColorTo(Material target, string propertyName, Color to, float duration, float delay, int easeId)
+```
+マテリアルのColor型のプロパティを指定した色に変更します。
+
+#### `MaterialFadeTo`
+```C#
+MaterialFadeTo(Material target, string propertyName, float to, float duration, float delay, int easeId)
+```
+マテリアルのColor型のプロパティの透明度を指定した値に変更します。
+
+#### `MaterialVectorTo`
+```C#
+MaterialVectorTo(Material target, string propertyName, Vector4 to, float duration, float delay, int easeId)
+```
+マテリアルのVector型のプロパティを指定した値に変更します。
+
+#### `MaterialFloatTo`
+```C#
+MaterialFloatTo(Material target, string propertyName, float to, float duration, float delay, int easeId)
+```
+マテリアルのFloat型のプロパティを指定した値に変更します。
+
+#### `MaterialTexOffsetTo`
+```C#
+MaterialTexOffsetTo(Material target, string propertyName, Vector2 to, float duration, float delay, int easeId)
+```
+マテリアルのテクスチャ型のプロパティのOffsetを指定した値に変更します。
+
+#### `MaterialTexTilingTo`
+```C#
+MaterialTexTilingTo(Material target, string propertyName, Vector2 to, float duration, float delay, int easeId)
+```
+マテリアルのテクスチャ型のプロパティのTilingを指定した値に変更します。
+
 ### Misc
 #### `DelayedSetActive`
 ```C#
