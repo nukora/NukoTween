@@ -1813,7 +1813,7 @@ namespace NukoTween
         /// </summary>
         /// <param name="target">tween対象</param>
         /// <param name="propertyName">プロパティ名</param>
-        /// <param name="to">変更後の色</param>
+        /// <param name="to">変更後の値</param>
         /// <param name="duration">tweenにかける時間(s)</param>
         /// <param name="delay">tween開始を遅らせる時間(s)</param>
         /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
@@ -1907,7 +1907,7 @@ namespace NukoTween
         /// </summary>
         /// <param name="target">tween対象</param>
         /// <param name="propertyName">プロパティ名</param>
-        /// <param name="to">変更後の色</param>
+        /// <param name="to">変更後の値</param>
         /// <param name="duration">tweenにかける時間(s)</param>
         /// <param name="delay">tween開始を遅らせる時間(s)</param>
         /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
