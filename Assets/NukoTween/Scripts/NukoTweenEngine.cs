@@ -55,14 +55,22 @@ namespace NukoTween
         private AudioSource[] targetAudioSourceCollection;
         private Text[] targetTextCollection;
         private TextMeshProUGUI[] targetTMPCollection;
+        private string[] targetStringCollection;
+        private Material[] targetMaterialCollection;
 
         // tween前の状態
+        private float[] fromFloatCollection;
+        private Vector2[] fromVector2Collection;
         private Vector3[] fromVector3Collection;
+        private Vector4[] fromVector4Collection;
         private Color[] fromColorCollection;
         private Quaternion[] fromQuaternionCollection;
 
         // tween後の状態
+        private float[] toFloatCollection;
+        private Vector2[] toVector2Collection;
         private Vector3[] toVector3Collection;
+        private Vector4[] toVector4Collection;
         private Quaternion[] toQuaternionCollection;
         private Color[] toColorCollection;
         private string[] toStringCollection;
@@ -139,20 +147,26 @@ namespace NukoTween
         // アクションを指定する為のID
         //======================================================================================
         #region enum Action
-        private const int ActionNone             =   0;
-        private const int ActionLocalMove        = 100;
-        private const int ActionMove             = 101;
-        private const int ActionLocalRotate      = 200;
-        private const int ActionRotate           = 202;
-        private const int ActionLocalScale       = 300;
-        private const int ActionAnchorPos        = 400;
-        private const int ActionGraphicColor     = 401;
-        private const int ActionGraphicFade      = 402;
-        private const int ActionFillAmount       = 403;
-        private const int ActionText             = 404;
-        private const int ActionTMPText          = 405;
-        private const int ActionAudioFade        = 406;
-        private const int ActionDelayedSetActive = 900;
+        private const int ActionNone              =   0;
+        private const int ActionLocalMove         = 100;
+        private const int ActionMove              = 101;
+        private const int ActionLocalRotate       = 200;
+        private const int ActionRotate            = 202;
+        private const int ActionLocalScale        = 300;
+        private const int ActionAnchorPos         = 400;
+        private const int ActionGraphicColor      = 401;
+        private const int ActionGraphicFade       = 402;
+        private const int ActionFillAmount        = 403;
+        private const int ActionText              = 404;
+        private const int ActionTMPText           = 405;
+        private const int ActionAudioFade         = 406;
+        private const int ActionMaterialColor     = 500;
+        private const int ActionMaterialFade      = 501;
+        private const int ActionMaterialFloat     = 502;
+        private const int ActionMaterialVector    = 503;
+        private const int ActionMaterialTexTiling = 504;
+        private const int ActionMaterialTexOffset = 505;
+        private const int ActionDelayedSetActive  = 900;
         #endregion
 
 
@@ -185,10 +199,18 @@ namespace NukoTween
             targetAudioSourceCollection = new AudioSource[simultaneousSize];
             targetTextCollection = new Text[simultaneousSize];
             targetTMPCollection = new TextMeshProUGUI[simultaneousSize];
+            targetStringCollection = new string[simultaneousSize];
+            targetMaterialCollection = new Material[simultaneousSize];
+            fromFloatCollection = new float[simultaneousSize];
+            fromVector2Collection = new Vector2[simultaneousSize];
             fromVector3Collection = new Vector3[simultaneousSize];
+            fromVector4Collection = new Vector4[simultaneousSize];
             fromQuaternionCollection = new Quaternion[simultaneousSize];
             fromColorCollection = new Color[simultaneousSize];
+            toFloatCollection = new float[simultaneousSize];
+            toVector2Collection = new Vector2[simultaneousSize];
             toVector3Collection = new Vector3[simultaneousSize];
+            toVector4Collection = new Vector4[simultaneousSize];
             toQuaternionCollection = new Quaternion[simultaneousSize];
             toColorCollection = new Color[simultaneousSize];
             toStringCollection = new string[simultaneousSize];
@@ -286,6 +308,30 @@ namespace NukoTween
 
                 case ActionAudioFade:
                     ExecuteActionAudioFade(index, isRequestComplete);
+                    break;
+
+                case ActionMaterialColor:
+                    ExecuteActionMaterialColor(index, isRequestComplete);
+                    break;
+
+                case ActionMaterialFade:
+                    ExecuteActionMaterialFade(index, isRequestComplete);
+                    break;
+
+                case ActionMaterialFloat:
+                    ExecuteActionMaterialFloat(index, isRequestComplete);
+                    break;
+
+                case ActionMaterialVector:
+                    ExecuteActionMaterialVector(index, isRequestComplete);
+                    break;
+
+                case ActionMaterialTexOffset:
+                    ExecuteActionMaterialTexOffset(index, isRequestComplete);
+                    break;
+
+                case ActionMaterialTexTiling:
+                    ExecuteActionMaterialTexTiling(index, isRequestComplete);
                     break;
 
                 case ActionDelayedSetActive:
@@ -1024,7 +1070,7 @@ namespace NukoTween
 
             actionCollection[endCollectionIndex] = ActionGraphicFade;
             targetGraphicCollection[endCollectionIndex] = target;
-            toColorCollection[endCollectionIndex] = new Color(0f, 0f, 0f, to);
+            toFloatCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
             startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
@@ -1046,7 +1092,7 @@ namespace NukoTween
             if (!workingCollection[index])
             {
                 workingCollection[index] = true;
-                fromColorCollection[index] = target.color;
+                fromFloatCollection[index] = target.color.a;
             }
 
             var delta = Time.time - startTime;
@@ -1056,14 +1102,14 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                var color = targetGraphicCollection[index].color;
-                color.a = Mathf.Lerp(fromColorCollection[index].a, toColorCollection[index].a, easeRatio);
+                var color = target.color;
+                color.a = Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio);
                 target.color = color;
             }
             else
             {
-                var color = targetGraphicCollection[index].color;
-                color.a = toColorCollection[index].a;
+                var color = target.color;
+                color.a = toFloatCollection[index];
                 target.color = color;
 
                 if (loopCountCollection[index] == 0)
@@ -1082,9 +1128,9 @@ namespace NukoTween
                     }
                     else if (loopMode == LoopModeReverse)
                     {
-                        var tmp = fromColorCollection[index];
-                        fromColorCollection[index] = toColorCollection[index];
-                        toColorCollection[index] = tmp;
+                        var tmp = fromFloatCollection[index];
+                        fromFloatCollection[index] = toFloatCollection[index];
+                        toFloatCollection[index] = tmp;
                     }
                     else
                     {
@@ -1113,7 +1159,7 @@ namespace NukoTween
 
             actionCollection[endCollectionIndex] = ActionFillAmount;
             targetGraphicCollection[endCollectionIndex] = target;
-            toVector3Collection[endCollectionIndex] = new Vector3(to, 0f);
+            toFloatCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
             startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
@@ -1135,7 +1181,7 @@ namespace NukoTween
             if (!workingCollection[index])
             {
                 workingCollection[index] = true;
-                fromVector3Collection[index] = new Vector3(target.fillAmount, 0f);
+                fromFloatCollection[index] = target.fillAmount;
             }
 
             var delta = Time.time - startTime;
@@ -1145,11 +1191,11 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.fillAmount = Mathf.Lerp(fromVector3Collection[index].x, toVector3Collection[index].x, easeRatio);
+                target.fillAmount = Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio);
             }
             else
             {
-                target.fillAmount = toVector3Collection[index].x;
+                target.fillAmount = toFloatCollection[index];
 
                 if (loopCountCollection[index] == 0)
                 {
@@ -1167,9 +1213,9 @@ namespace NukoTween
                     }
                     else if (loopMode == LoopModeReverse)
                     {
-                        var tmp = fromVector3Collection[index];
-                        fromVector3Collection[index] = toVector3Collection[index];
-                        toVector3Collection[index] = tmp;
+                        var tmp = fromFloatCollection[index];
+                        fromFloatCollection[index] = toFloatCollection[index];
+                        toFloatCollection[index] = tmp;
                     }
                     else
                     {
@@ -1320,7 +1366,7 @@ namespace NukoTween
 
             actionCollection[endCollectionIndex] = ActionAudioFade;
             targetAudioSourceCollection[endCollectionIndex] = target;
-            toVector3Collection[endCollectionIndex] = new Vector3(to, 0f);
+            toFloatCollection[endCollectionIndex] = to;
             durationCollection[endCollectionIndex] = duration;
             startTimeCollection[endCollectionIndex] += delay;
             easeIdCollection[endCollectionIndex] = easeId;
@@ -1342,7 +1388,7 @@ namespace NukoTween
             if (!workingCollection[index])
             {
                 workingCollection[index] = true;
-                fromVector3Collection[index] = new Vector3(target.volume, 0f);
+                fromFloatCollection[index] = target.volume;
             }
 
             var delta = Time.time - startTime;
@@ -1352,11 +1398,11 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.volume = Mathf.Lerp(fromVector3Collection[index].x, toVector3Collection[index].x, easeRatio);
+                target.volume = Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio);
             }
             else
             {
-                target.volume = toVector3Collection[index].x;
+                target.volume = toFloatCollection[index];
 
                 if (loopCountCollection[index] == 0)
                 {
@@ -1374,9 +1420,571 @@ namespace NukoTween
                     }
                     else if (loopMode == LoopModeReverse)
                     {
-                        var tmp = fromVector3Collection[index];
-                        fromVector3Collection[index] = toVector3Collection[index];
-                        toVector3Collection[index] = tmp;
+                        var tmp = fromFloatCollection[index];
+                        fromFloatCollection[index] = toFloatCollection[index];
+                        toFloatCollection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// マテリアルのColor型のプロパティをTweenする
+        /// </summary>
+        /// <param name="target">tween対象</param>
+        /// <param name="propertyName">プロパティ名</param>
+        /// <param name="to">変更後の色</param>
+        /// <param name="duration">tweenにかける時間(s)</param>
+        /// <param name="delay">tween開始を遅らせる時間(s)</param>
+        /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
+        /// <returns>tweenId</returns>
+        public int MaterialColorTo(Material target, string propertyName, Color to, float duration, float delay, int easeId)
+        {
+            if (!ValidateRegisterAction()) return -1;
+
+            if (!target.HasProperty(propertyName))
+            {
+                LogError($"引数{nameof(target)}で指定したマテリアルにプロパティ{propertyName}が存在しません");
+                return -1;
+            }
+
+            RegisterAction();
+
+            actionCollection[endCollectionIndex] = ActionMaterialColor;
+            targetMaterialCollection[endCollectionIndex] = target;
+            targetStringCollection[endCollectionIndex] = propertyName;
+            toColorCollection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            startTimeCollection[endCollectionIndex] += delay;
+            easeIdCollection[endCollectionIndex] = easeId;
+
+            return currentTweenId;
+        }
+
+        private void ExecuteActionMaterialColor(int index, bool isRequestComplete)
+        {
+            var startTime = startTimeCollection[index];
+
+            if (Time.time < startTime && !isRequestComplete)
+            {
+                return;
+            }
+
+            var target = targetMaterialCollection[index];
+            var propertyName = targetStringCollection[index];
+
+            if (!workingCollection[index])
+            {
+                workingCollection[index] = true;
+                fromColorCollection[index] = target.GetColor(propertyName);
+            }
+
+            var delta = Time.time - startTime;
+            var dulation = durationCollection[index];
+
+            if (delta < dulation && !isRequestComplete)
+            {
+                var ratio = delta / dulation;
+                var easeRatio = Ease(easeIdCollection[index], ratio);
+                target.SetColor(propertyName, Color.Lerp(fromColorCollection[index], toColorCollection[index], easeRatio));
+            }
+            else
+            {
+                target.SetColor(propertyName, toColorCollection[index]);
+
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromColorCollection[index];
+                        fromColorCollection[index] = toColorCollection[index];
+                        toColorCollection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// マテリアルのColor型のプロパティのAlpha値をTweenする
+        /// </summary>
+        /// <param name="target">tween対象</param>
+        /// <param name="propertyName">プロパティ名</param>
+        /// <param name="to">変更後のAlpha値</param>
+        /// <param name="duration">tweenにかける時間(s)</param>
+        /// <param name="delay">tween開始を遅らせる時間(s)</param>
+        /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
+        /// <returns>tweenId</returns>
+        public int MaterialFadeTo(Material target, string propertyName, float to, float duration, float delay, int easeId)
+        {
+            if (!ValidateRegisterAction()) return -1;
+
+            RegisterAction();
+
+            actionCollection[endCollectionIndex] = ActionMaterialFade;
+            targetMaterialCollection[endCollectionIndex] = target;
+            targetStringCollection[endCollectionIndex] = propertyName;
+            toFloatCollection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            startTimeCollection[endCollectionIndex] += delay;
+            easeIdCollection[endCollectionIndex] = easeId;
+
+            return currentTweenId;
+        }
+
+        private void ExecuteActionMaterialFade(int index, bool isRequestComplete)
+        {
+            var startTime = startTimeCollection[index];
+
+            if (Time.time < startTime && !isRequestComplete)
+            {
+                return;
+            }
+
+            var target = targetMaterialCollection[index];
+            var propertyName = targetStringCollection[index];
+
+            if (!workingCollection[index])
+            {
+                workingCollection[index] = true;
+                fromFloatCollection[index] = target.GetColor(propertyName).a;
+            }
+
+            var delta = Time.time - startTime;
+            var dulation = durationCollection[index];
+
+            if (delta < dulation && !isRequestComplete)
+            {
+                var ratio = delta / dulation;
+                var easeRatio = Ease(easeIdCollection[index], ratio);
+                var color = target.GetColor(propertyName);
+                color.a = Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio);
+                target.SetColor(propertyName, color);
+            }
+            else
+            {
+                var color = target.GetColor(propertyName);
+                color.a = toFloatCollection[index];
+                target.SetColor(propertyName, color);
+
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromFloatCollection[index];
+                        fromFloatCollection[index] = toFloatCollection[index];
+                        toFloatCollection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// マテリアルのVector型のプロパティをTweenする
+        /// </summary>
+        /// <param name="target">tween対象</param>
+        /// <param name="propertyName">プロパティ名</param>
+        /// <param name="to">変更後の値</param>
+        /// <param name="duration">tweenにかける時間(s)</param>
+        /// <param name="delay">tween開始を遅らせる時間(s)</param>
+        /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
+        /// <returns>tweenId</returns>
+        public int MaterialVectorTo(Material target, string propertyName, Vector4 to, float duration, float delay, int easeId)
+        {
+            if (!ValidateRegisterAction()) return -1;
+
+            if (!target.HasProperty(propertyName))
+            {
+                LogError($"引数{nameof(target)}で指定したマテリアルにプロパティ{propertyName}が存在しません");
+                return -1;
+            }
+
+            RegisterAction();
+
+            actionCollection[endCollectionIndex] = ActionMaterialVector;
+            targetMaterialCollection[endCollectionIndex] = target;
+            targetStringCollection[endCollectionIndex] = propertyName;
+            toVector4Collection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            startTimeCollection[endCollectionIndex] += delay;
+            easeIdCollection[endCollectionIndex] = easeId;
+
+            return currentTweenId;
+        }
+
+        private void ExecuteActionMaterialVector(int index, bool isRequestComplete)
+        {
+            var startTime = startTimeCollection[index];
+
+            if (Time.time < startTime && !isRequestComplete)
+            {
+                return;
+            }
+
+            var target = targetMaterialCollection[index];
+            var propertyName = targetStringCollection[index];
+
+            if (!workingCollection[index])
+            {
+                workingCollection[index] = true;
+                fromVector4Collection[index] = target.GetVector(propertyName);
+            }
+
+            var delta = Time.time - startTime;
+            var dulation = durationCollection[index];
+
+            if (delta < dulation && !isRequestComplete)
+            {
+                var ratio = delta / dulation;
+                var easeRatio = Ease(easeIdCollection[index], ratio);
+                target.SetVector(propertyName, Vector4.Lerp(fromVector4Collection[index], toVector4Collection[index], easeRatio));
+            }
+            else
+            {
+                target.SetVector(propertyName, toVector4Collection[index]);
+
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector4Collection[index];
+                        fromVector4Collection[index] = toVector4Collection[index];
+                        toVector4Collection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// マテリアルのFloat型のプロパティをTweenする
+        /// </summary>
+        /// <param name="target">tween対象</param>
+        /// <param name="propertyName">プロパティ名</param>
+        /// <param name="to">変更後の値</param>
+        /// <param name="duration">tweenにかける時間(s)</param>
+        /// <param name="delay">tween開始を遅らせる時間(s)</param>
+        /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
+        /// <returns>tweenId</returns>
+        public int MaterialFloatTo(Material target, string propertyName, float to, float duration, float delay, int easeId)
+        {
+            if (!ValidateRegisterAction()) return -1;
+
+            if (!target.HasProperty(propertyName))
+            {
+                LogError($"引数{nameof(target)}で指定したマテリアルにプロパティ{propertyName}が存在しません");
+                return -1;
+            }
+
+            RegisterAction();
+
+            actionCollection[endCollectionIndex] = ActionMaterialFloat;
+            targetMaterialCollection[endCollectionIndex] = target;
+            targetStringCollection[endCollectionIndex] = propertyName;
+            toFloatCollection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            startTimeCollection[endCollectionIndex] += delay;
+            easeIdCollection[endCollectionIndex] = easeId;
+
+            return currentTweenId;
+        }
+
+        private void ExecuteActionMaterialFloat(int index, bool isRequestComplete)
+        {
+            var startTime = startTimeCollection[index];
+
+            if (Time.time < startTime && !isRequestComplete)
+            {
+                return;
+            }
+
+            var target = targetMaterialCollection[index];
+            var propertyName = targetStringCollection[index];
+
+            if (!workingCollection[index])
+            {
+                workingCollection[index] = true;
+                fromFloatCollection[index] = target.GetFloat(propertyName);
+            }
+
+            var delta = Time.time - startTime;
+            var dulation = durationCollection[index];
+
+            if (delta < dulation && !isRequestComplete)
+            {
+                var ratio = delta / dulation;
+                var easeRatio = Ease(easeIdCollection[index], ratio);
+                target.SetFloat(propertyName, Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio));
+            }
+            else
+            {
+                target.SetFloat(propertyName, toFloatCollection[index]);
+
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromFloatCollection[index];
+                        fromFloatCollection[index] = toFloatCollection[index];
+                        toFloatCollection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// マテリアルのテクスチャのOffsetをTweenする
+        /// </summary>
+        /// <param name="target">tween対象</param>
+        /// <param name="propertyName">プロパティ名</param>
+        /// <param name="to">変更後の色</param>
+        /// <param name="duration">tweenにかける時間(s)</param>
+        /// <param name="delay">tween開始を遅らせる時間(s)</param>
+        /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
+        /// <returns>tweenId</returns>
+        public int MaterialTexOffsetTo(Material target, string propertyName, Vector2 to, float duration, float delay, int easeId)
+        {
+            if (!ValidateRegisterAction()) return -1;
+
+            if (!target.HasProperty(propertyName))
+            {
+                LogError($"引数{nameof(target)}で指定したマテリアルにプロパティ{propertyName}が存在しません");
+                return -1;
+            }
+
+            RegisterAction();
+
+            actionCollection[endCollectionIndex] = ActionMaterialTexOffset;
+            targetMaterialCollection[endCollectionIndex] = target;
+            targetStringCollection[endCollectionIndex] = propertyName;
+            toVector2Collection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            startTimeCollection[endCollectionIndex] += delay;
+            easeIdCollection[endCollectionIndex] = easeId;
+
+            return currentTweenId;
+        }
+
+        private void ExecuteActionMaterialTexOffset(int index, bool isRequestComplete)
+        {
+            var startTime = startTimeCollection[index];
+
+            if (Time.time < startTime && !isRequestComplete)
+            {
+                return;
+            }
+
+            var target = targetMaterialCollection[index];
+            var propertyName = targetStringCollection[index];
+
+            if (!workingCollection[index])
+            {
+                workingCollection[index] = true;
+                fromVector2Collection[index] = target.GetTextureOffset(propertyName);
+            }
+
+            var delta = Time.time - startTime;
+            var dulation = durationCollection[index];
+
+            if (delta < dulation && !isRequestComplete)
+            {
+                var ratio = delta / dulation;
+                var easeRatio = Ease(easeIdCollection[index], ratio);
+                target.SetTextureOffset(propertyName, Vector2.Lerp(fromVector2Collection[index], toVector2Collection[index], easeRatio));
+            }
+            else
+            {
+                target.SetTextureOffset(propertyName, toVector2Collection[index]);
+
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector2Collection[index];
+                        fromVector2Collection[index] = toVector2Collection[index];
+                        toVector2Collection[index] = tmp;
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
+            }
+        }
+
+        /// <summary>
+        /// マテリアルのテクスチャのTilingをTweenする
+        /// </summary>
+        /// <param name="target">tween対象</param>
+        /// <param name="propertyName">プロパティ名</param>
+        /// <param name="to">変更後の色</param>
+        /// <param name="duration">tweenにかける時間(s)</param>
+        /// <param name="delay">tween開始を遅らせる時間(s)</param>
+        /// <param name="easeId">イージング関数(tween.EaseXXX)</param>
+        /// <returns>tweenId</returns>
+        public int MaterialTexTilingTo(Material target, string propertyName, Vector2 to, float duration, float delay, int easeId)
+        {
+            if (!ValidateRegisterAction()) return -1;
+
+            if (!target.HasProperty(propertyName))
+            {
+                LogError($"引数{nameof(target)}で指定したマテリアルにプロパティ{propertyName}が存在しません");
+                return -1;
+            }
+
+            RegisterAction();
+
+            actionCollection[endCollectionIndex] = ActionMaterialTexTiling;
+            targetMaterialCollection[endCollectionIndex] = target;
+            targetStringCollection[endCollectionIndex] = propertyName;
+            toVector2Collection[endCollectionIndex] = to;
+            durationCollection[endCollectionIndex] = duration;
+            startTimeCollection[endCollectionIndex] += delay;
+            easeIdCollection[endCollectionIndex] = easeId;
+
+            return currentTweenId;
+        }
+
+        private void ExecuteActionMaterialTexTiling(int index, bool isRequestComplete)
+        {
+            var startTime = startTimeCollection[index];
+
+            if (Time.time < startTime && !isRequestComplete)
+            {
+                return;
+            }
+
+            var target = targetMaterialCollection[index];
+            var propertyName = targetStringCollection[index];
+
+            if (!workingCollection[index])
+            {
+                workingCollection[index] = true;
+                fromVector2Collection[index] = target.GetTextureScale(propertyName);
+            }
+
+            var delta = Time.time - startTime;
+            var dulation = durationCollection[index];
+
+            if (delta < dulation && !isRequestComplete)
+            {
+                var ratio = delta / dulation;
+                var easeRatio = Ease(easeIdCollection[index], ratio);
+                target.SetTextureScale(propertyName, Vector2.Lerp(fromVector2Collection[index], toVector2Collection[index], easeRatio));
+            }
+            else
+            {
+                target.SetTextureScale(propertyName, toVector2Collection[index]);
+
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else if (loopMode == LoopModeReverse)
+                    {
+                        var tmp = fromVector2Collection[index];
+                        fromVector2Collection[index] = toVector2Collection[index];
+                        toVector2Collection[index] = tmp;
                     }
                     else
                     {
@@ -1610,12 +2218,14 @@ namespace NukoTween
             tweenIdCollection[index] = 0;
             actionCollection[index] = ActionNone;
 
-            targetAudioSourceCollection[index] = null;
             targetCollection[index] = null;
+            targetRectTransformCollection[index] = null;
             targetGraphicCollection[index] = null;
             targetAudioSourceCollection[index] = null;
             targetTextCollection[index] = null;
             targetTMPCollection[index] = null;
+            targetStringCollection[index] = null;
+            targetMaterialCollection[index] = null;
         }
 
         /// <summary>
