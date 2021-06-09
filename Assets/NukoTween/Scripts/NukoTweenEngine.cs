@@ -399,7 +399,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.transform.localPosition = Vector3.Lerp(fromVector3Collection[index], toVector3Collection[index], easeRatio);
+                target.transform.localPosition = Vector3.LerpUnclamped(fromVector3Collection[index], toVector3Collection[index], easeRatio);
             }
             else
             {
@@ -497,7 +497,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.transform.position = Vector3.Lerp(fromVector3Collection[index], toVector3Collection[index], easeRatio);
+                target.transform.position = Vector3.LerpUnclamped(fromVector3Collection[index], toVector3Collection[index], easeRatio);
             }
             else
             {
@@ -602,7 +602,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                rectTransform.anchoredPosition3D = Vector3.Lerp(fromVector3Collection[index], toVector3Collection[index], easeRatio);
+                rectTransform.anchoredPosition3D = Vector3.LerpUnclamped(fromVector3Collection[index], toVector3Collection[index], easeRatio);
             }
             else
             {
@@ -700,7 +700,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.transform.localScale = Vector3.Lerp(fromVector3Collection[index], toVector3Collection[index], easeRatio);
+                target.transform.localScale = Vector3.LerpUnclamped(fromVector3Collection[index], toVector3Collection[index], easeRatio);
             }
             else
             {
@@ -813,7 +813,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.transform.localRotation = Quaternion.Lerp(fromQuaternionCollection[index], toQuaternionCollection[index], easeRatio);
+                target.transform.localRotation = Quaternion.LerpUnclamped(fromQuaternionCollection[index], toQuaternionCollection[index], easeRatio);
             }
             else
             {
@@ -926,7 +926,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.transform.rotation = Quaternion.Lerp(fromQuaternionCollection[index], toQuaternionCollection[index], easeRatio);
+                target.transform.rotation = Quaternion.LerpUnclamped(fromQuaternionCollection[index], toQuaternionCollection[index], easeRatio);
             }
             else
             {
@@ -1017,7 +1017,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.color = Color.Lerp(fromColorCollection[index], toColorCollection[index], easeRatio);
+                target.color = Color.LerpUnclamped(fromColorCollection[index], toColorCollection[index], easeRatio);
             }
             else
             {
@@ -1103,7 +1103,7 @@ namespace NukoTween
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
                 var color = target.color;
-                color.a = Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio);
+                color.a = Mathf.LerpUnclamped(fromFloatCollection[index], toFloatCollection[index], easeRatio);
                 target.color = color;
             }
             else
@@ -1191,7 +1191,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.fillAmount = Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio);
+                target.fillAmount = Mathf.LerpUnclamped(fromFloatCollection[index], toFloatCollection[index], easeRatio);
             }
             else
             {
@@ -1398,7 +1398,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.volume = Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio);
+                target.volume = Mathf.LerpUnclamped(fromFloatCollection[index], toFloatCollection[index], easeRatio);
             }
             else
             {
@@ -1492,7 +1492,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.SetColor(propertyName, Color.Lerp(fromColorCollection[index], toColorCollection[index], easeRatio));
+                target.SetColor(propertyName, Color.LerpUnclamped(fromColorCollection[index], toColorCollection[index], easeRatio));
             }
             else
             {
@@ -1581,7 +1581,7 @@ namespace NukoTween
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
                 var color = target.GetColor(propertyName);
-                color.a = Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio);
+                color.a = Mathf.LerpUnclamped(fromFloatCollection[index], toFloatCollection[index], easeRatio);
                 target.SetColor(propertyName, color);
             }
             else
@@ -1678,7 +1678,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.SetVector(propertyName, Vector4.Lerp(fromVector4Collection[index], toVector4Collection[index], easeRatio));
+                target.SetVector(propertyName, Vector4.LerpUnclamped(fromVector4Collection[index], toVector4Collection[index], easeRatio));
             }
             else
             {
@@ -1772,7 +1772,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.SetFloat(propertyName, Mathf.Lerp(fromFloatCollection[index], toFloatCollection[index], easeRatio));
+                target.SetFloat(propertyName, Mathf.LerpUnclamped(fromFloatCollection[index], toFloatCollection[index], easeRatio));
             }
             else
             {
@@ -1866,7 +1866,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.SetTextureOffset(propertyName, Vector2.Lerp(fromVector2Collection[index], toVector2Collection[index], easeRatio));
+                target.SetTextureOffset(propertyName, Vector2.LerpUnclamped(fromVector2Collection[index], toVector2Collection[index], easeRatio));
             }
             else
             {
@@ -1960,7 +1960,7 @@ namespace NukoTween
             {
                 var ratio = delta / dulation;
                 var easeRatio = Ease(easeIdCollection[index], ratio);
-                target.SetTextureScale(propertyName, Vector2.Lerp(fromVector2Collection[index], toVector2Collection[index], easeRatio));
+                target.SetTextureScale(propertyName, Vector2.LerpUnclamped(fromVector2Collection[index], toVector2Collection[index], easeRatio));
             }
             else
             {
