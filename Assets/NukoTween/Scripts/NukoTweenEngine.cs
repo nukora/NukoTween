@@ -11,6 +11,7 @@ namespace NukoTween
     /// <summary>
     /// Tween機能を提供するUdonBehaviour
     /// </summary>
+    [DefaultExecutionOrder(-100)]
     public class NukoTweenEngine : UdonSharpBehaviour
     {
         //======================================================================================
