@@ -1285,7 +1285,27 @@ namespace NukoTween
             {
                 target.text = toStringCollection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
@@ -1346,7 +1366,27 @@ namespace NukoTween
             {
                 target.text = toStringCollection[index];
 
-                UnregisterAction(index);
+                if (loopCountCollection[index] == 0)
+                {
+                    UnregisterAction(index);
+                }
+                else
+                {
+                    startTimeCollection[index] = startTime + dulation;
+
+                    var loopMode = loopModeCollection[index];
+
+                    if (loopMode == LoopModeRestart)
+                    {
+                        // Empty
+                    }
+                    else
+                    {
+                        UnregisterAction(index);
+                    }
+
+                    loopCountCollection[index] = Mathf.Max(-1, loopCountCollection[index] - 1);
+                }
             }
         }
 
