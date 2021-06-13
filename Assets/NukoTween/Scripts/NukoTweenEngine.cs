@@ -58,6 +58,7 @@ namespace NukoTween
         private TextMeshProUGUI[] targetTMPCollection;
         private string[] targetStringCollection;
         private Material[] targetMaterialCollection;
+        private UdonSharpBehaviour[] targetUdonSharpBehaviourCollection;
 
         // tween前の状態
         private float[] fromFloatCollection;
@@ -168,6 +169,7 @@ namespace NukoTween
         private const int ActionMaterialTexTiling = 504;
         private const int ActionMaterialTexOffset = 505;
         private const int ActionDelayedSetActive  = 900;
+        private const int ActionDelayedCall       = 901;
         #endregion
 
 
@@ -202,6 +204,7 @@ namespace NukoTween
             targetTMPCollection = new TextMeshProUGUI[simultaneousSize];
             targetStringCollection = new string[simultaneousSize];
             targetMaterialCollection = new Material[simultaneousSize];
+            targetUdonSharpBehaviourCollection = new UdonSharpBehaviour[simultaneousSize];
             fromFloatCollection = new float[simultaneousSize];
             fromVector2Collection = new Vector2[simultaneousSize];
             fromVector3Collection = new Vector3[simultaneousSize];
@@ -337,6 +340,10 @@ namespace NukoTween
 
                 case ActionDelayedSetActive:
                     ExecuteDelayedSetActive(index, isRequestComplete);
+                    break;
+
+                case ActionDelayedCall:
+                    ExecuteDelayedCall(index, isRequestComplete);
                     break;
 
                 default:
@@ -2070,6 +2077,34 @@ namespace NukoTween
 
             UnregisterAction(index);
         }
+
+        public int DelayedCall(UdonSharpBehaviour target, string customEventName, float delay)
+        {
+            if (!ValidateRegisterAction()) return -1;
+
+            RegisterAction();
+
+            actionCollection[endCollectionIndex] = ActionDelayedCall;
+            targetUdonSharpBehaviourCollection[endCollectionIndex] = target;
+            targetStringCollection[endCollectionIndex] = customEventName;
+            startTimeCollection[endCollectionIndex] += delay;
+
+            return currentTweenId;
+        }
+
+        private void ExecuteDelayedCall(int index, bool isRequestComplete)
+        {
+            var startTime = startTimeCollection[index];
+
+            if (Time.time < startTime && !isRequestComplete)
+            {
+                return;
+            }
+
+            targetUdonSharpBehaviourCollection[index].SendCustomEvent(targetStringCollection[index]);
+
+            UnregisterAction(index);
+        }
         #endregion
 
 
@@ -2267,6 +2302,7 @@ namespace NukoTween
             targetTMPCollection[index] = null;
             targetStringCollection[index] = null;
             targetMaterialCollection[index] = null;
+            targetUdonSharpBehaviourCollection[index] = null;
         }
 
         /// <summary>
