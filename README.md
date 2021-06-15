@@ -187,6 +187,12 @@ DelayedSetActive(GameObject target, bool active, float delay)
 ```
 指定した時間後にGameObjectのSetActiveを変更します。
 
+#### `DelayedCall`
+```C#
+DelayedCall(UdonSharpBehaviour target, string customEventName, float delay)
+```
+指定した時間後にSendCustomEventを実行します。
+
 ### Control Mathods
 #### `Complete`
 ```C#
