@@ -2078,6 +2078,13 @@ namespace NukoTween
             UnregisterAction(index);
         }
 
+        /// <summary>
+        /// 指定した時間後にSendCustomEventを実行する
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="customEventName"></param>
+        /// <param name="delay"></param>
+        /// <returns></returns>
         public int DelayedCall(UdonSharpBehaviour target, string customEventName, float delay)
         {
             if (!ValidateRegisterAction()) return -1;
@@ -2129,6 +2136,19 @@ namespace NukoTween
         }
 
         /// <summary>
+        /// 全ての動作中のtweenを完了状態にする
+        /// </summary>
+        public void CompleteAll()
+        {
+            var indexes = GetAllIndexes();
+
+            foreach (var index in indexes)
+            {
+                ExecuteAction(index, true);
+            }
+        }
+
+        /// <summary>
         /// 動作中のtweenを中止する
         /// </summary>
         /// <param name="tweenId"></param>
@@ -2142,6 +2162,19 @@ namespace NukoTween
             }
 
             UnregisterAction(index);
+        }
+
+        /// <summary>
+        /// 全ての動作中のtweenを中止する
+        /// </summary>
+        public void KillAll()
+        {
+            var indexes = GetAllIndexes();
+
+            foreach (var index in indexes)
+            {
+                UnregisterAction(index);
+            }
         }
 
         /// <summary>
@@ -2343,6 +2376,33 @@ namespace NukoTween
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// コレクションのindex一覧を取得する
+        /// </summary>
+        /// <returns></returns>
+        private int[] GetAllIndexes()
+        {
+            var results = new int[numberOfTweening];
+
+            var index = beginCollectionIndex;
+            var nextIndex = -1;
+
+            for (var i = 0; i < numberOfTweening; i++)
+            {
+                nextIndex = nextIndexCollection[index];
+
+                results[i] = index;
+
+                index = nextIndex;
+                if (index == -1)
+                {
+                    break;
+                }
+            }
+
+            return results;
         }
 
         /// <summary>
