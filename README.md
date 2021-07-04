@@ -200,11 +200,23 @@ Complete(int tweenId)
 ```
 動作中のtweenを即座に完了状態にします。
 
+#### `CompleteAll`
+```C#
+CompleteAll()
+```
+全ての動作中のtweenを完了状態にします。
+
 #### `Kill`
 ```C#
 Kill(int tweenId)
 ```
 動作中のtweenを現在の状態で中止します。
+
+#### `KillAll`
+```C#
+KillAll()
+```
+全ての動作中のtweenを現在の状態で中止します。
 
 ### Loop
 登録したtweenがループするように設定します。  
