@@ -6,7 +6,7 @@ NukoTweenはUdonで実装されたTweenアニメーションエンジンです�
 
 ### 前提条件
 以下のパッケージが導入されている事が前提となります。
-- Unity 2018.4.20f1 
+- Unity 2019.4.29f1 
 - [VRChat SDK3 - World](https://vrchat.com/home/download)
 - [UdonSharp](https://github.com/MerlinVR/UdonSharp)
 
