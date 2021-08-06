@@ -230,13 +230,13 @@ LoopRestart(int tweenId, int loops)
 
 #### `LoopReverse`
 ```C#
-LoopRestart(int tweenId, int loops)
+LoopReverse(int tweenId, int loops)
 ```
 ループする際、前回の終点を始点として、前回の始点へ戻るようなアニメーションを繰り返します。
 
 #### `LoopIncremental`
 ```C#
-LoopRestart(int tweenId, int loops)
+LoopIncremental(int tweenId, int loops)
 ```
 ループする際、前回の終点を始点として、前回と同じアニメーションを実行します。
 
