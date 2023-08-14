@@ -22,7 +22,7 @@ VRChat Creator Companion (VCC)が導入されている事が前提となりま�
 
 
 ### 使用方法
-1. Assets/NukoTweenディレクトリの中にあるNukoTweenEngineプレハブをヒエラルキーに配置します。
+1. Packages/NukoTween/Runtimeディレクトリの中にあるNukoTweenEngineプレハブをヒエラルキーに配置します。
 2. ヒエラルキー上にTweenさせたいオブジェクトを作成します。
 3. 作成したオブジェクトにUdonBehaviorをアタッチし、以下のようなスクリプトを書きます。
 ```C#
