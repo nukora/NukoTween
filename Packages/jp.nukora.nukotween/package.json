@@ -1,0 +1,18 @@
+{
+  "name": "jp.nukora.nukotween",
+  "displayName": "NukoTween",
+  "version": "1.0.0",
+  "description": "Udon上で動くTweenアニメーションエンジン",
+  "gitDependencies": {},
+  "vpmDependencies": {
+    "com.vrchat.udonsharp": "1.1.9"
+  },
+  "author": {
+    "name": "nukora",
+    "url": "https://github.com/nukora/NukoTween"
+  },
+  "legacyFolders": {
+    "Assets\\NukoTween": ""
+  },
+  "legacyFiles": {}
+}

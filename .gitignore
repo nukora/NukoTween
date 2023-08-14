@@ -49,7 +49,7 @@ crashlytics-build.properties
 
 # Ignore
 /Assets/*
-/Packages
+/Packages/*
 /ProjectSettings
 !/Assets/NukoTween/
 .vsconfig
