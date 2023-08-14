@@ -5,14 +5,21 @@ NukoTweenはUdonで実装されたTweenアニメーションエンジンです�
 ## 導入方法
 
 ### 前提条件
-以下のパッケージが導入されている事が前提となります。
-- Unity 2019.4.29f1 
-- [VRChat SDK3 - World](https://vrchat.com/home/download)
-- [UdonSharp](https://github.com/MerlinVR/UdonSharp)
+VRChat Creator Companion (VCC)が導入されている事が前提となります。
+
+また、以下のパッケージを追加する必要があります。
+- UdonSharp
 
 ### インストール
-1. [NukoTweenのリリースページ](https://github.com/nukora/NukoTween/releases)から最新版のunitypackageをダウンロードします。
-2. VRCSDK3、UdonSharpが導入されているプロジェクトにダウンロードしたunitypackageをインポートします。
+1. [NukoTween導入ページ](https://nukora.github.io/NukoTween/)にアクセスし、Add to VCCボタンを押下します。
+2. VCCが起動しNukoTweenリポジトリの追加確認画面が表示されますので、画面に従って追加してください。
+3. NukoTweenを使用したいプロジェクトをVCCで探し、Manage Projectボタンを押下します。
+4. パッケージ一覧からNukoTweenを追加してください。
+
+※2回目以降は手順1と2は省略できます。
+
+※VCC環境以外では[NukoTween v0.0.8のリリースページ](https://github.com/nukora/NukoTween/releases/tag/v0.0.8)から旧バージョンのunitypackageをダウンロードしてください。ただし、こちらは今後アップデートされません。
+
 
 ### 使用方法
 1. Assets/NukoTweenディレクトリの中にあるNukoTweenEngineプレハブをヒエラルキーに配置します。
